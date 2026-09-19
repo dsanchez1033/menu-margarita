@@ -40,7 +40,7 @@ Los platos admiten saltos de línea (`\n` en JSON). El ejemplo mantiene los salt
 
 El lienzo mantiene las medidas exactas del PDF: 595,5 × 842,25 puntos. Las posiciones, colores y tamaños de los textos se extrajeron del PDF. Las pequeñas diferencias de suavizado entre un navegador y un visor PDF dependen de su motor de renderizado.
 
-Los platos, refrescos, precios y teléfono usan [Knewave](https://github.com/google/fonts/tree/main/ofl/knewave), una fuente de pincel con mayúsculas, minúsculas, tildes, ñ, cifras y puntuación. La fuente y su licencia SIL Open Font License están incrustadas en el HTML; funcionan sin conexión y se incluyen también en las exportaciones PNG/PDF. Se sustituyó Ahkio en estos campos porque el PDF solo incluía un subconjunto de letras, lo que mezclaba tipografías al escribir palabras nuevas. Los encabezados fijos y las fechas conservan el estilo original.
+Los platos, refrescos, precios y teléfono usan [Barlow SemiBold](https://github.com/google/fonts/tree/main/ofl/barlow), una tipografía de trazos claros con mayúsculas, minúsculas, tildes, ñ, cifras y puntuación. La fuente y su licencia SIL Open Font License están incrustadas en el HTML; funcionan sin conexión y se incluyen también en las exportaciones PNG/PDF. Se sustituyó Ahkio en estos campos porque el PDF solo incluía un subconjunto de letras, lo que mezclaba tipografías al escribir palabras nuevas. Los encabezados fijos y las fechas conservan el estilo original. El teléfono tiene un espacio propio a la derecha del icono de WhatsApp y reduce su tamaño si el número es largo.
 
 En pantallas de hasta 820 px, los controles de edición y compartir aparecen debajo del menú, sin superponerse al diseño y con espacio para el área segura del dispositivo.
 
