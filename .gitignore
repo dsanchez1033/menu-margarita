@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Archivos temporales y exportaciones locales
+tmp/
+*.log
+menu-margarita.png
+menu-margarita.pdf
+
+# Configuración local de editores
+.vscode/
+.idea/
