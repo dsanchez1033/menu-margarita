@@ -32,7 +32,7 @@ Edita `menu-margarita.json` y ejecuta desde esta carpeta:
 python3 scripts/render.py menu-margarita.json index.html
 ```
 
-El script usa únicamente la biblioteca estándar de Python, verifica que estén presentes las 17 variables y escapa los valores para evitar que se interpreten como HTML. También puedes sustituir las variables con un motor de plantillas que admita esta sintaxis y escape HTML.
+El script usa únicamente la biblioteca estándar de Python, verifica que estén presentes las 18 variables y escapa los valores para evitar que se interpreten como HTML. También puedes sustituir las variables con un motor de plantillas que admita esta sintaxis y escape HTML.
 
 Los platos admiten saltos de línea (`\n` en JSON). El ejemplo mantiene los saltos del original. El JavaScript de la plantilla espera a que cargue la fuente y ajusta los textos que excedan sus espacios; debe permanecer habilitado para el ajuste y los saltos de línea. No se necesitan librerías externas.
 
@@ -40,7 +40,9 @@ Los platos admiten saltos de línea (`\n` en JSON). El ejemplo mantiene los salt
 
 El lienzo mantiene las medidas exactas del PDF: 595,5 × 842,25 puntos. Las posiciones, colores y tamaños de los textos se extrajeron del PDF. Las pequeñas diferencias de suavizado entre un navegador y un visor PDF dependen de su motor de renderizado.
 
-La fuente Ahkio incrustada en el PDF es un subconjunto: incluye los caracteres usados en el original y todos los dígitos, pero no el alfabeto completo. Por ejemplo, faltan `k`, `q`, `x`, `í`, varias mayúsculas y el punto decimal. Los caracteres ausentes se muestran con una fuente de respaldo. Para conservar exactamente la tipografía con cualquier nuevo plato o precio, es necesario sustituir el `src` de `@font-face` por una copia completa de Ahkio que tengas autorizada. El ejemplo proporcionado usa solo caracteres originales y conserva la tipografía.
+Los platos, refrescos, precios y teléfono usan [Knewave](https://github.com/google/fonts/tree/main/ofl/knewave), una fuente de pincel con mayúsculas, minúsculas, tildes, ñ, cifras y puntuación. La fuente y su licencia SIL Open Font License están incrustadas en el HTML; funcionan sin conexión y se incluyen también en las exportaciones PNG/PDF. Se sustituyó Ahkio en estos campos porque el PDF solo incluía un subconjunto de letras, lo que mezclaba tipografías al escribir palabras nuevas. Los encabezados fijos y las fechas conservan el estilo original.
+
+En pantallas de hasta 820 px, los controles de edición y compartir aparecen debajo del menú, sin superponerse al diseño y con espacio para el área segura del dispositivo.
 
 ## Publicar en GitHub Pages
 
