@@ -109,8 +109,11 @@ text { font-family: AhkioPDF, sans-serif; font-weight: 400; font-kerning: none; 
 .plato, .refresco { fill: #442314; }
 .plato, .refresco, .precio, .telefono { font-family: MenuText, sans-serif; font-weight: 600; }
 .contacto, .telefono { fill: #ffda94; }
-.editable { cursor: pointer; outline: none; touch-action: manipulation; }
-.edit-hint { position: fixed; z-index: 11; width: 26px; height: 26px; display: grid; place-items: center; color: #442314; background: #ffda94; border: 1px solid #442314; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,.25); pointer-events: none; }
+.editable { cursor: pointer; outline: none; touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+.edit-hint { position: fixed; z-index: 11; width: 26px; height: 26px; padding: 0; display: grid; place-items: center; color: #442314; background: #ffda94; border: 1px solid #442314; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,.25); cursor: pointer; touch-action: manipulation; }
+.edit-hint[data-touch="true"] { width: 44px; height: 44px; }
+.edit-hint[data-touch="true"] svg { width: 22px; height: 22px; }
+.editable.edit-selected { paint-order: stroke; stroke: rgba(255,255,255,.7); stroke-width: 1.5px; }
 .edit-hint[hidden] { display: none; }
 .edit-hint svg { width: 16px; height: 16px; }
 .editable:hover, .editable:focus { paint-order: stroke; stroke: rgba(255,255,255,.7); stroke-width: 1.5px; }
@@ -142,7 +145,7 @@ dialog textarea:focus { border-color: #c96136; outline: 3px solid rgba(201,97,54
   html, body { width: 595.5pt; height: 842.25pt; background: #442314; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
   .menu { width: 595.5pt; height: 842.25pt; max-width: none; margin: 0; break-inside: avoid; }
   .edit-toolbar, .edit-hint, dialog { display: none !important; }
-  .editable:hover, .editable:focus { stroke: none; }
+  .editable:hover, .editable:focus, .editable.edit-selected { stroke: none; }
 }
 </style>
 </head>
@@ -201,11 +204,11 @@ dialog textarea:focus { border-color: #c96136; outline: 3px solid rgba(201,97,54
   <button id="openShare" type="button">Compartir</button>
   <button id="resetAll" type="button">Restablecer</button>
 </div>
-<div id="editHint" class="edit-hint" hidden aria-hidden="true">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<button id="editHint" class="edit-hint" type="button" hidden aria-label="Editar dato">
+  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="m16 3 5 5M3 21l5-1L21 7a2.1 2.1 0 0 0-5-3L3 17z"/>
   </svg>
-</div>
+</button>
 <dialog id="editorDialog">
   <form id="editorForm">
     <h2>✎ Editar Menú Margarita</h2>
@@ -262,6 +265,12 @@ dialog textarea:focus { border-color: #c96136; outline: 3px solid rgba(201,97,54
   const label = document.getElementById('editorLabel');
   const status = document.getElementById('editStatus');
   const editHint = document.getElementById('editHint');
+  const touchInput = window.matchMedia('(pointer: coarse)');
+  const editInstructions = () => touchInput.matches
+    ? '✎ Toca un dato y luego el lápiz para editar'
+    : '✎ Haz clic en un dato para editar';
+  status.textContent = editInstructions();
+  let selectedField = null;
   const shareDialog = document.getElementById('shareDialog');
   const whatsappButton = document.getElementById('shareWhatsapp');
   let preparedPdfBlob = null;
@@ -345,7 +354,7 @@ dialog textarea:focus { border-color: #c96136; outline: 3px solid rgba(201,97,54
     for (const el of fields) values[el.dataset.field] = el.dataset.value;
     localStorage.setItem(storageKey, JSON.stringify(values));
     status.textContent = '✓ Cambios guardados';
-    window.setTimeout(() => { status.textContent = '✎ Toca o haz clic en un dato para editar'; }, 1800);
+    window.setTimeout(() => { status.textContent = editInstructions(); }, 1800);
   }
 
   function invalidateExports() {
@@ -357,6 +366,7 @@ dialog textarea:focus { border-color: #c96136; outline: 3px solid rgba(201,97,54
     layout();
     const svg = document.querySelector('.menu');
     const clone = svg.cloneNode(true);
+    clone.querySelectorAll('.edit-selected').forEach(el => el.classList.remove('edit-selected'));
     clone.setAttribute('width', '595.5');
     clone.setAttribute('height', '842.25');
 
@@ -431,16 +441,31 @@ dialog textarea:focus { border-color: #c96136; outline: 3px solid rgba(201,97,54
 
   function hideEditHint() {
     editHint.hidden = true;
+    if (selectedField) selectedField.classList.remove('edit-selected');
+    selectedField = null;
   }
 
-  function showEditHint(el) {
+  function showEditHint(el, touch = false) {
     if (dialog.open || shareDialog.open) return;
-    const bounds = el.getBoundingClientRect();
-    editHint.style.left = Math.max(4, Math.min(bounds.right + 6, window.innerWidth - 30)) + 'px';
-    editHint.style.top = Math.max(4, Math.min(bounds.top + bounds.height / 2 - 13, window.innerHeight - 30)) + 'px';
+    hideEditHint();
+    selectedField = el;
+    el.classList.add('edit-selected');
+    editHint.dataset.touch = String(touch);
+    editHint.setAttribute('aria-label', 'Editar ' + el.dataset.label);
     editHint.hidden = false;
+    const bounds = el.getBoundingClientRect();
+    const size = editHint.offsetWidth;
+    editHint.style.left = Math.max(4, Math.min(bounds.right + 6, window.innerWidth - size - 4)) + 'px';
+    editHint.style.top = Math.max(4, Math.min(bounds.top + bounds.height / 2 - size / 2, window.innerHeight - size - 4)) + 'px';
   }
 
+  editHint.addEventListener('click', () => {
+    if (selectedField) openEditor(selectedField);
+  });
+  document.addEventListener('pointerdown', event => {
+    if (!event.target.closest('.editable, #editHint')) hideEditHint();
+  });
+  dialog.addEventListener('close', hideEditHint);
   window.addEventListener('scroll', hideEditHint, true);
   window.addEventListener('resize', hideEditHint);
 
@@ -461,13 +486,22 @@ dialog textarea:focus { border-color: #c96136; outline: 3px solid rgba(201,97,54
     if (Object.prototype.hasOwnProperty.call(saved, el.dataset.field)) {
       el.dataset.value = String(saved[el.dataset.field]);
     }
-    el.addEventListener('click', () => openEditor(el));
+    el.addEventListener('click', event => {
+      if (event.pointerType === 'touch' || (touchInput.matches && event.detail !== 0)) {
+        showEditHint(el, true);
+      } else {
+        openEditor(el);
+      }
+    });
     el.addEventListener('pointerenter', event => {
       if (event.pointerType === 'mouse') showEditHint(el);
     });
-    el.addEventListener('pointerleave', hideEditHint);
-    el.addEventListener('focus', () => showEditHint(el));
-    el.addEventListener('blur', hideEditHint);
+    el.addEventListener('focus', () => {
+      if (!touchInput.matches) showEditHint(el);
+    });
+    el.addEventListener('blur', event => {
+      if (event.relatedTarget !== editHint) hideEditHint();
+    });
     el.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
