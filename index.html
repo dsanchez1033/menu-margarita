@@ -109,7 +109,8 @@ text { font-family: AhkioPDF, sans-serif; font-weight: 400; font-kerning: none; 
 .plato, .refresco { fill: #442314; }
 .plato, .refresco, .precio, .telefono { font-family: MenuText, sans-serif; font-weight: 600; }
 .contacto, .telefono { fill: #ffda94; }
-.editable { cursor: pointer; outline: none; touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+.editable { cursor: pointer; outline: none; pointer-events: all; touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+.menu [aria-hidden="true"] { pointer-events: none; }
 .edit-hint { position: fixed; z-index: 11; width: 26px; height: 26px; padding: 0; display: grid; place-items: center; color: #442314; background: #ffda94; border: 1px solid #442314; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,.25); cursor: pointer; touch-action: manipulation; }
 .edit-hint[data-touch="true"] { width: 44px; height: 44px; }
 .edit-hint[data-touch="true"] svg { width: 22px; height: 22px; }
@@ -463,10 +464,20 @@ hamburguesa</text>
     editHint.style.top = Math.max(4, Math.min(bounds.top + bounds.height / 2 - size / 2, window.innerHeight - size - 4)) + 'px';
   }
 
+  // Safari puede omitir el clic sintetizado tras un toque: abre al soltar el dedo.
+  editHint.addEventListener('pointerup', event => {
+    if (event.pointerType === 'touch' || event.pointerType === 'pen') {
+      event.preventDefault();
+      if (selectedField) openEditor(selectedField);
+    }
+  });
   editHint.addEventListener('click', () => {
     if (selectedField) openEditor(selectedField);
   });
   document.addEventListener('pointerdown', event => {
+    if (!event.target.closest('.editable, #editHint')) hideEditHint();
+  });
+  document.addEventListener('focusin', event => {
     if (!event.target.closest('.editable, #editHint')) hideEditHint();
   });
   dialog.addEventListener('close', hideEditHint);
@@ -502,9 +513,6 @@ hamburguesa</text>
     });
     el.addEventListener('focus', () => {
       if (!touchInput.matches) showEditHint(el);
-    });
-    el.addEventListener('blur', event => {
-      if (event.relatedTarget !== editHint) hideEditHint();
     });
     el.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') {
