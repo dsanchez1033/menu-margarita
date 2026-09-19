@@ -18,7 +18,7 @@ Precios: `{{precio_menu}}` y `{{precio_carta}}`. El celular usa `{{telefono}}`. 
 
 ## Edición directa
 
-En `index.html`, haz doble clic sobre cualquier día, plato, refresco, precio o número celular. Escribe el nuevo valor y pulsa **Guardar**. Los cambios se conservan en el navegador aunque recargues la página. El botón **Restablecer** recupera los valores de `menu-margarita.json`.
+En `index.html`, toca o haz clic sobre cualquier día, plato, refresco, precio o número celular. En computadora aparece un lápiz junto al dato al pasar el cursor o enfocarlo con el teclado. También puedes abrir la edición con Enter o la barra espaciadora. Escribe el nuevo valor y pulsa **Guardar**. Los cambios se conservan en el navegador aunque recargues la página. El botón **Restablecer** recupera los valores iniciales incrustados en el HTML. El lápiz es una ayuda de la interfaz y no aparece al imprimir ni al exportar.
 
 El botón **Compartir** permite descargar el menú visible como imagen PNG o PDF. También ofrece **Compartir PDF por WhatsApp**: en dispositivos compatibles abre el menú nativo para elegir WhatsApp y un contacto. Si el navegador no admite compartir archivos, descarga `menu-margarita.pdf` para adjuntarlo manualmente. Todos los archivos incluyen los cambios guardados en el navegador; los controles de edición no aparecen en la exportación.
 

@@ -109,7 +109,10 @@ text { font-family: AhkioPDF, sans-serif; font-weight: 400; font-kerning: none; 
 .plato, .refresco { fill: #442314; }
 .plato, .refresco, .precio, .telefono { font-family: MenuText, sans-serif; font-weight: 600; }
 .contacto, .telefono { fill: #ffda94; }
-.editable { cursor: pointer; outline: none; }
+.editable { cursor: pointer; outline: none; touch-action: manipulation; }
+.edit-hint { position: fixed; z-index: 11; width: 26px; height: 26px; display: grid; place-items: center; color: #442314; background: #ffda94; border: 1px solid #442314; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,.25); pointer-events: none; }
+.edit-hint[hidden] { display: none; }
+.edit-hint svg { width: 16px; height: 16px; }
 .editable:hover, .editable:focus { paint-order: stroke; stroke: rgba(255,255,255,.7); stroke-width: 1.5px; }
 .edit-toolbar { position: fixed; z-index: 10; top: 12px; right: 12px; display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: #fff4d1; background: rgba(68,35,20,.94); border: 1px solid rgba(255,244,209,.35); border-radius: 999px; font: 600 13px/1.2 system-ui, sans-serif; box-shadow: 0 5px 20px rgba(0,0,0,.25); }
 .edit-toolbar button, dialog button { border: 0; border-radius: 8px; padding: 8px 11px; font: 600 13px system-ui, sans-serif; cursor: pointer; }
@@ -138,7 +141,7 @@ dialog textarea:focus { border-color: #c96136; outline: 3px solid rgba(201,97,54
 @media print {
   html, body { width: 595.5pt; height: 842.25pt; background: #442314; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
   .menu { width: 595.5pt; height: 842.25pt; max-width: none; margin: 0; break-inside: avoid; }
-  .edit-toolbar, dialog { display: none !important; }
+  .edit-toolbar, .edit-hint, dialog { display: none !important; }
   .editable:hover, .editable:focus { stroke: none; }
 }
 </style>
@@ -198,13 +201,18 @@ hamburguesa</text>
     <text class="telefono ajustable editable" x="445" y="763.048768" font-size="26.6500416" data-width="142" data-field="telefono" data-label="número celular" data-value="923 XXX XXX" tabindex="0" role="button">923 XXX XXX</text>
 </svg>
 <div class="edit-toolbar" aria-live="polite">
-  <span id="editStatus">✎ Doble clic para editar</span>
+  <span id="editStatus">✎ Toca o haz clic en un dato para editar</span>
   <button id="openShare" type="button">Compartir</button>
   <button id="resetAll" type="button">Restablecer</button>
 </div>
+<div id="editHint" class="edit-hint" hidden aria-hidden="true">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m16 3 5 5M3 21l5-1L21 7a2.1 2.1 0 0 0-5-3L3 17z"/>
+  </svg>
+</div>
 <dialog id="editorDialog">
   <form id="editorForm">
-    <h2>Editar Menú Margarita</h2>
+    <h2>✎ Editar Menú Margarita</h2>
     <p>El cambio se guarda automáticamente en este navegador.</p>
     <label id="editorLabel" for="editorValue"></label>
     <textarea id="editorValue" maxlength="120" required></textarea>
@@ -257,6 +265,7 @@ hamburguesa</text>
   const input = document.getElementById('editorValue');
   const label = document.getElementById('editorLabel');
   const status = document.getElementById('editStatus');
+  const editHint = document.getElementById('editHint');
   const shareDialog = document.getElementById('shareDialog');
   const whatsappButton = document.getElementById('shareWhatsapp');
   let preparedPdfBlob = null;
@@ -340,7 +349,7 @@ hamburguesa</text>
     for (const el of fields) values[el.dataset.field] = el.dataset.value;
     localStorage.setItem(storageKey, JSON.stringify(values));
     status.textContent = '✓ Cambios guardados';
-    window.setTimeout(() => { status.textContent = '✎ Doble clic para editar'; }, 1800);
+    window.setTimeout(() => { status.textContent = '✎ Toca o haz clic en un dato para editar'; }, 1800);
   }
 
   function invalidateExports() {
@@ -424,7 +433,24 @@ hamburguesa</text>
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
+  function hideEditHint() {
+    editHint.hidden = true;
+  }
+
+  function showEditHint(el) {
+    if (dialog.open || shareDialog.open) return;
+    const bounds = el.getBoundingClientRect();
+    editHint.style.left = Math.max(4, Math.min(bounds.right + 6, window.innerWidth - 30)) + 'px';
+    editHint.style.top = Math.max(4, Math.min(bounds.top + bounds.height / 2 - 13, window.innerHeight - 30)) + 'px';
+    editHint.hidden = false;
+  }
+
+  window.addEventListener('scroll', hideEditHint, true);
+  window.addEventListener('resize', hideEditHint);
+
   function openEditor(el) {
+    if (dialog.open) return;
+    hideEditHint();
     activeField = el;
     label.textContent = 'Nuevo ' + el.dataset.label;
     input.value = el.dataset.value;
@@ -439,7 +465,13 @@ hamburguesa</text>
     if (Object.prototype.hasOwnProperty.call(saved, el.dataset.field)) {
       el.dataset.value = String(saved[el.dataset.field]);
     }
-    el.addEventListener('dblclick', () => openEditor(el));
+    el.addEventListener('click', () => openEditor(el));
+    el.addEventListener('pointerenter', event => {
+      if (event.pointerType === 'mouse') showEditHint(el);
+    });
+    el.addEventListener('pointerleave', hideEditHint);
+    el.addEventListener('focus', () => showEditHint(el));
+    el.addEventListener('blur', hideEditHint);
     el.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
@@ -461,6 +493,7 @@ hamburguesa</text>
 
   document.getElementById('cancelEdit').addEventListener('click', () => dialog.close());
   document.getElementById('openShare').addEventListener('click', () => {
+    hideEditHint();
     shareDialog.showModal();
     whatsappButton.disabled = true;
     whatsappButton.textContent = 'Preparando PDF…';
