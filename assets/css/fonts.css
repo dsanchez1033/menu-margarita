@@ -1,0 +1,17 @@
+/* AhkioPDF is the subset embedded in the original menu artwork. */
+@font-face {
+  font-family: "AhkioPDF";
+  src: url("../fonts/AhkioPDF.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+}
+
+/* Copyright 2017 The Barlow Project Authors. Licensed under the SIL OFL 1.1. */
+@font-face {
+  font-family: "MenuText";
+  src: url("../fonts/Barlow-SemiBold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 600;
+  font-display: block;
+}

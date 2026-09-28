@@ -1,0 +1,110 @@
+:root {
+  --color-brown: #442314;
+  --color-cream: #fff4d1;
+  --color-gold: #ffda94;
+  --color-card: #b5785c;
+  --color-accent: #c96136;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-brown);
+}
+
+.menu {
+  display: block;
+  width: 100%;
+  max-width: 794px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.menu text {
+  font-family: "AhkioPDF", sans-serif;
+  font-weight: 400;
+  font-kerning: none;
+  font-variant-ligatures: none;
+  text-anchor: middle;
+  white-space: pre;
+}
+
+.fecha,
+.precio {
+  fill: var(--color-cream);
+}
+
+.plato,
+.refresco {
+  fill: var(--color-brown);
+}
+
+.plato,
+.refresco,
+.precio,
+.telefono {
+  font-family: "MenuText", sans-serif;
+  font-weight: 600;
+}
+
+.contacto,
+.telefono {
+  fill: var(--color-gold);
+}
+
+.editable {
+  cursor: pointer;
+  outline: none;
+  pointer-events: all;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.menu [aria-hidden="true"] {
+  pointer-events: none;
+}
+
+.editable.edit-selected,
+.editable:hover,
+.editable:focus {
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.7);
+  stroke-width: 1.5px;
+}
+
+@page {
+  size: 595.5pt 842.25pt;
+  margin: 0;
+}
+
+@media print {
+  html,
+  body {
+    width: 595.5pt;
+    height: 842.25pt;
+    background: var(--color-brown);
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .menu {
+    width: 595.5pt;
+    height: 842.25pt;
+    max-width: none;
+    margin: 0;
+    break-inside: avoid;
+  }
+
+  .editable:hover,
+  .editable:focus,
+  .editable.edit-selected {
+    stroke: none;
+  }
+}

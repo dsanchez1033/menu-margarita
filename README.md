@@ -1,10 +1,52 @@
-# Plantilla del menú semanal
+# Menú Margarita
 
-`menu-template.html` es el archivo listo para integrar. Incluye el fondo original a 288 ppp, fotografías y fuente dentro del propio HTML; se puede copiar como un único archivo y funciona sin conexión. Los textos variables son texto real en SVG dentro del HTML. El resto del diseño conserva los elementos del PDF.
+Sitio estático para editar, imprimir y compartir el menú semanal de Margarita. El diseño conserva las medidas del PDF original y funciona en cualquier servidor web estático, incluido GitHub Pages.
 
-`index.html` es la versión final de Menú Margarita, lista para abrir, imprimir o publicar. `menu-template.html` conserva las variables y `menu-margarita.json` contiene los datos editables del menú actual.
+## Estructura
 
-## Variables
+```text
+.
+├── index.html                 # Menú generado y listo para publicar
+├── menu-template.html         # Plantilla con las 18 variables editables
+├── menu-margarita.json        # Contenido del menú actual
+├── assets/
+│   ├── css/                   # Fuentes, diseño del menú y controles
+│   ├── fonts/                 # Tipografías y licencia de Barlow
+│   ├── images/                # Fondo e icono de WhatsApp
+│   ├── js/                    # Edición, diseño, almacenamiento y exportación
+│   └── vendor/                # pdf-lib, conservada en su versión original
+└── scripts/render.py          # Generador sin dependencias externas
+```
+
+`menu-template.html` es la fuente del HTML. `index.html` se vuelve a generar desde la plantilla y no debe mantenerse manualmente.
+
+## Ejecutar localmente
+
+Los módulos JavaScript y los recursos deben servirse mediante HTTP. Desde la raíz del proyecto ejecuta:
+
+```bash
+python3 -m http.server 8000
+```
+
+Después abre [http://localhost:8000](http://localhost:8000). Abrir `index.html` mediante doble clic no es un modo soportado.
+
+## Editar y generar el menú
+
+Actualiza `menu-margarita.json` y ejecuta:
+
+```bash
+python3 scripts/render.py menu-margarita.json index.html
+```
+
+El generador usa únicamente la biblioteca estándar de Python. Comprueba que la plantilla contenga las 18 variables esperadas, exige todos los valores y los escapa antes de insertarlos en el HTML. Los platos admiten saltos de línea mediante `\n` en JSON.
+
+Para generar un sitio en otra carpeta:
+
+```bash
+python3 scripts/render.py menu-margarita.json public/index.html
+```
+
+En ese caso también se copia `assets` a `public/assets`, por lo que la carpeta resultante queda lista para publicar.
 
 | Día | Número de día | Plato | Refresco |
 | --- | --- | --- | --- |
@@ -14,46 +56,34 @@
 | Jueves | `{{jueves_dia}}` | `{{jueves_plato}}` | `{{jueves_refresco}}` |
 | Viernes | `{{viernes_dia}}` | `{{viernes_plato}}` | `{{viernes_refresco}}` |
 
-Precios: `{{precio_menu}}` y `{{precio_carta}}`. El celular usa `{{telefono}}`. Introduce solo el importe; `S/` está en la plantilla. Introduce solo el nombre de la bebida; `Refresco:` ya está en el diseño.
+Las variables restantes son `{{precio_menu}}`, `{{precio_carta}}` y `{{telefono}}`. En los precios se introduce solo el importe; el diseño agrega `S/`. En los refrescos se introduce solo el nombre; el diseño agrega `Refresco:`.
 
-## Edición directa
+## Edición y exportación
 
-En móvil, toca cualquier día, plato, refresco, precio o número celular para seleccionarlo y mostrar un lápiz de 44 px; toca el lápiz para abrir la edición. En computadora, el lápiz aparece al pasar el cursor o enfocar el dato, y un clic en el dato o en el lápiz abre la edición. También puedes usar Enter o la barra espaciadora. Escribe el nuevo valor y pulsa **Guardar**. Al cerrar, el lápiz desaparece. Los cambios se conservan en el navegador aunque recargues la página. El botón **Restablecer** recupera los valores iniciales incrustados en el HTML. El lápiz y la selección no aparecen al imprimir ni al exportar.
+En móvil, toca un dato y después el lápiz. En computadora, haz clic en el dato o utiliza Enter o la barra espaciadora. Los cambios se guardan bajo la clave `menu-margarita-edicion-v1` de `localStorage` y se conservan mientras se use el mismo origen web.
 
-El botón **Compartir** permite descargar el menú visible como imagen PNG o PDF. También ofrece **Compartir PDF por WhatsApp**: en dispositivos compatibles abre el menú nativo para elegir WhatsApp y un contacto. Si el navegador no admite compartir archivos, descarga `menu-margarita.pdf` para adjuntarlo manualmente. Todos los archivos incluyen los cambios guardados en el navegador; los controles de edición no aparecen en la exportación.
+El botón **Restablecer** recupera los valores generados originalmente. El botón **Compartir** permite:
 
-Los nombres de los días permanecen fijos. El contacto, logotipos y fotografías se conservan del original.
+- descargar una imagen PNG;
+- descargar un PDF;
+- compartir el PDF mediante el menú nativo del dispositivo o descargarlo para adjuntarlo en WhatsApp.
 
-## Generar un menú
-
-Edita `menu-margarita.json` y ejecuta desde esta carpeta:
-
-```bash
-python3 scripts/render.py menu-margarita.json index.html
-```
-
-El script usa únicamente la biblioteca estándar de Python, verifica que estén presentes las 18 variables y escapa los valores para evitar que se interpreten como HTML. También puedes sustituir las variables con un motor de plantillas que admita esta sintaxis y escape HTML.
-
-Los platos admiten saltos de línea (`\n` en JSON). El ejemplo mantiene los saltos del original. El JavaScript de la plantilla espera a que cargue la fuente y ajusta los textos que excedan sus espacios; debe permanecer habilitado para el ajuste y los saltos de línea. No se necesitan librerías externas.
-
-## Fidelidad y tipografía
-
-El lienzo mantiene las medidas exactas del PDF: 595,5 × 842,25 puntos. Las posiciones, colores y tamaños de los textos se extrajeron del PDF. Las pequeñas diferencias de suavizado entre un navegador y un visor PDF dependen de su motor de renderizado.
-
-Los platos, refrescos, precios y teléfono usan [Barlow SemiBold](https://github.com/google/fonts/tree/main/ofl/barlow), una tipografía de trazos claros con mayúsculas, minúsculas, tildes, ñ, cifras y puntuación. La fuente y su licencia SIL Open Font License están incrustadas en el HTML; funcionan sin conexión y se incluyen también en las exportaciones PNG/PDF. Se sustituyó Ahkio en estos campos porque el PDF solo incluía un subconjunto de letras, lo que mezclaba tipografías al escribir palabras nuevas. Los encabezados fijos y las fechas conservan el estilo original. El teléfono tiene un espacio propio a la derecha del icono de WhatsApp y reduce su tamaño si el número es largo.
-
-En pantallas de hasta 820 px, los controles de edición y compartir aparecen debajo del menú, sin superponerse al diseño y con espacio para el área segura del dispositivo.
+La exportación incorpora las imágenes y fuentes en una copia del SVG, por lo que los archivos descargados no dependen del servidor. Los controles de edición tampoco aparecen en la imagen, el PDF ni la impresión.
 
 ## Publicar en GitHub Pages
 
-El proyecto incluye `.github/workflows/pages.yml`. Cada cambio enviado a las ramas `main` o `master` publica únicamente `index.html` como un sitio estático.
+El proyecto usa rutas relativas y puede publicarse en la raíz de un sitio o bajo una ruta como `usuario.github.io/nombre-del-repositorio/`.
 
-1. Sube esta carpeta a un repositorio de GitHub.
-2. En **Settings → Pages**, selecciona **GitHub Actions** en **Source**.
-3. Envía los cambios a `main` o `master`, o ejecuta manualmente **Deploy GitHub Pages** desde la pestaña **Actions**.
+1. Sube `index.html`, `assets` y los demás archivos del proyecto al repositorio.
+2. Abre **Settings → Pages**.
+3. En **Source**, selecciona **Deploy from a branch**.
+4. Selecciona la rama `main` o `master` y la carpeta `/(root)`.
+5. Guarda la configuración y espera a que GitHub Pages publique el sitio.
 
-GitHub Pages sirve el sitio con HTTPS, requisito de los navegadores para compartir archivos desde el menú nativo. En equipos o navegadores que no admitan compartir un PDF directamente, el botón de WhatsApp descarga el archivo para adjuntarlo manualmente.
+No se necesita un workflow ni un proceso de compilación para publicar. Cada vez que cambie el JSON, regenera `index.html` antes de enviar los cambios al repositorio.
 
-## Imprimir
+## Fidelidad, tipografía e impresión
 
-Abre el menú generado, espera a que se muestre y utiliza Imprimir / Guardar como PDF. Mantén escala 100 %, sin márgenes y sin encabezados ni pies del navegador. La regla `@page` conserva el tamaño original; activa los gráficos de fondo si tu navegador lo solicita.
+El lienzo mantiene las medidas exactas del PDF: 595,5 × 842,25 puntos. Los encabezados y fechas usan el subconjunto tipográfico del original; platos, refrescos, precios y teléfono usan Barlow SemiBold. Su licencia SIL Open Font License se encuentra en `assets/fonts/OFL-Barlow.txt`.
+
+Para imprimir, usa escala 100 %, sin márgenes y sin encabezados ni pies del navegador. Activa los gráficos de fondo si el navegador lo solicita.
