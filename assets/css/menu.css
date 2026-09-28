@@ -44,10 +44,10 @@ body {
   fill: var(--color-brown);
 }
 
-.plato,
-.refresco,
-.precio,
-.telefono {
+.menu .plato,
+.menu .refresco,
+.menu .precio,
+.menu .telefono {
   font-family: "MenuText", sans-serif;
   font-weight: 600;
 }

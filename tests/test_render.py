@@ -1,4 +1,5 @@
 import json
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -42,6 +43,14 @@ class RenderMenuTests(unittest.TestCase):
         self.assertNotIn('data:image', TEMPLATE)
         self.assertNotIn('data:font', TEMPLATE)
         self.assertNotIn('<script>', TEMPLATE)
+
+    def test_export_omits_transparent_day_hitboxes(self):
+        hitboxes = re.findall(
+            r'<rect class="([^"]*day-card-hitbox[^"]*)"[^>]*fill="transparent"',
+            TEMPLATE,
+        )
+        self.assertEqual(len(hitboxes), 5)
+        self.assertTrue(all('non-exportable' in classes.split() for classes in hitboxes))
 
     def test_assets_are_copied_next_to_an_external_output(self):
         with tempfile.TemporaryDirectory() as directory:
