@@ -35,7 +35,8 @@ function splitIntoLines(source, maximumWidth, maximumLines, measure) {
 
 export function createLayoutManager(fields) {
   function layoutField(element) {
-    const source = `${element.dataset.prefix || ''}${element.dataset.value || ''}`;
+    const value = element.dataset.value || '';
+    const source = value ? `${element.dataset.prefix || ''}${value}` : '';
     const initialFontSize = Number(element.dataset.initial || element.getAttribute('font-size'));
     const maximumWidth = Number(element.dataset.width);
     const maximumLines = Number(element.dataset.lines || 1);
@@ -69,14 +70,18 @@ export function createLayoutManager(fields) {
       element.append(span);
     });
 
-    element.setAttribute(
-      'aria-label',
-      `Editar ${element.dataset.label}: ${element.dataset.value}`,
-    );
+    if (element.classList.contains('editable')) {
+      element.setAttribute(
+        'aria-label',
+        `Editar ${element.dataset.label}: ${element.dataset.value}`,
+      );
+    } else {
+      element.removeAttribute('aria-label');
+    }
   }
 
   function compactRows() {
-    for (const group of document.querySelectorAll('g[role="group"]')) {
+    for (const group of document.querySelectorAll('.day-card')) {
       const plate = group.querySelector('.plato');
       const drink = group.querySelector('.refresco');
       if (!plate || !drink) continue;

@@ -71,6 +71,45 @@ body {
   pointer-events: none;
 }
 
+.day-card {
+  cursor: pointer;
+  outline: none;
+}
+
+.day-card-hitbox {
+  fill: transparent;
+  pointer-events: all;
+}
+
+.day-card:hover .fecha,
+.day-card:focus .fecha {
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.7);
+  stroke-width: 1.5px;
+}
+
+.day-card--no-classes .plato {
+  fill: var(--color-brown);
+  font-weight: 600;
+}
+
+.day-add-control circle {
+  fill: var(--color-gold);
+  stroke: var(--color-brown);
+  stroke-width: 1.5px;
+}
+
+.day-add-control path {
+  fill: none;
+  stroke: var(--color-brown);
+  stroke-linecap: round;
+  stroke-width: 2.5px;
+}
+
+.day-add-control[hidden] {
+  display: none;
+}
+
 .editable.edit-selected,
 .editable:hover,
 .editable:focus {
@@ -104,7 +143,13 @@ body {
 
   .editable:hover,
   .editable:focus,
-  .editable.edit-selected {
+  .editable.edit-selected,
+  .day-card:hover .fecha,
+  .day-card:focus .fecha {
     stroke: none;
+  }
+
+  .non-exportable {
+    display: none !important;
   }
 }

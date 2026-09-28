@@ -10,11 +10,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 VARIABLE = re.compile(r'\{\{\s*([a-z_]+)\s*\}\}')
 EXPECTED_VARIABLES = frozenset({
-    'lunes_dia', 'lunes_plato', 'lunes_refresco',
-    'martes_dia', 'martes_plato', 'martes_refresco',
-    'miercoles_dia', 'miercoles_plato', 'miercoles_refresco',
-    'jueves_dia', 'jueves_plato', 'jueves_refresco',
-    'viernes_dia', 'viernes_plato', 'viernes_refresco',
     'precio_menu', 'precio_carta', 'telefono',
 })
 
@@ -29,7 +24,7 @@ def render(template, values):
             details.append('faltan en la plantilla: ' + ', '.join(missing_in_template))
         if unexpected:
             details.append('variables desconocidas: ' + ', '.join(unexpected))
-        raise ValueError('La plantilla no contiene las 18 variables esperadas; ' + '; '.join(details))
+        raise ValueError('La plantilla no contiene las variables esperadas; ' + '; '.join(details))
 
     missing = sorted(required - values.keys())
     if missing:

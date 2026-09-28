@@ -7,10 +7,11 @@ Sitio estático para editar, imprimir y compartir el menú semanal de Margarita.
 ```text
 .
 ├── index.html                 # Menú generado y listo para publicar
-├── menu-template.html         # Plantilla con las 18 variables editables
-├── menu-margarita.json        # Contenido del menú actual
+├── menu-template.html         # Plantilla con precios y contacto editables
+├── menu-margarita.json        # Precios y teléfono iniciales
 ├── assets/
 │   ├── css/                   # Fuentes, diseño del menú y controles
+│   ├── data/                  # Catálogos compartidos de platos y refrescos
 │   ├── fonts/                 # Tipografías y licencia de Barlow
 │   ├── images/                # Fondo e icono de WhatsApp
 │   ├── js/                    # Edición, diseño, almacenamiento y exportación
@@ -38,7 +39,7 @@ Actualiza `menu-margarita.json` y ejecuta:
 python3 scripts/render.py menu-margarita.json index.html
 ```
 
-El generador usa únicamente la biblioteca estándar de Python. Comprueba que la plantilla contenga las 18 variables esperadas, exige todos los valores y los escapa antes de insertarlos en el HTML. Los platos admiten saltos de línea mediante `\n` en JSON.
+El generador usa únicamente la biblioteca estándar de Python. Comprueba que la plantilla contenga `{{precio_menu}}`, `{{precio_carta}}` y `{{telefono}}`, exige sus valores y los escapa antes de insertarlos en el HTML.
 
 Para generar un sitio en otra carpeta:
 
@@ -48,27 +49,47 @@ python3 scripts/render.py menu-margarita.json public/index.html
 
 En ese caso también se copia `assets` a `public/assets`, por lo que la carpeta resultante queda lista para publicar.
 
-| Día | Número de día | Plato | Refresco |
-| --- | --- | --- | --- |
-| Lunes | `{{lunes_dia}}` | `{{lunes_plato}}` | `{{lunes_refresco}}` |
-| Martes | `{{martes_dia}}` | `{{martes_plato}}` | `{{martes_refresco}}` |
-| Miércoles | `{{miercoles_dia}}` | `{{miercoles_plato}}` | `{{miercoles_refresco}}` |
-| Jueves | `{{jueves_dia}}` | `{{jueves_plato}}` | `{{jueves_refresco}}` |
-| Viernes | `{{viernes_dia}}` | `{{viernes_plato}}` | `{{viernes_refresco}}` |
+En los precios se introduce solo el importe; el diseño agrega `S/`. Las fechas y la configuración diaria se calculan y guardan en el navegador.
 
-Las variables restantes son `{{precio_menu}}`, `{{precio_carta}}` y `{{telefono}}`. En los precios se introduce solo el importe; el diseño agrega `S/`. En los refrescos se introduce solo el nombre; el diseño agrega `Refresco:`.
+## Catálogos de platos y refrescos
+
+Los archivos `assets/data/platos.json` y `assets/data/refrescos.json` son arrays de textos:
+
+```json
+[
+  "Pollo a la olla",
+  "Milanesa con papas fritas y cremas"
+]
+```
+
+Edita estos archivos y vuelve a publicar el proyecto para cambiar las opciones compartidas. La interfaz también permite elegir **Agregar nuevo…**. Esas opciones se guardan únicamente en el navegador y pueden eliminarse desde **Gestionar opciones personalizadas**. Platos y refrescos se muestran alfabéticamente; un selector con fondo dorado indica que el valor elegido es personalizado.
 
 ## Edición y exportación
 
-En móvil, toca un dato y después el lápiz. En computadora, haz clic en el dato o utiliza Enter o la barra espaciadora. Los cambios se guardan bajo la clave `menu-margarita-edicion-v1` de `localStorage` y se conservan mientras se use el mismo origen web.
+Al cargar la página se muestran las fechas de lunes a viernes de la siguiente semana calendario. Pulsa el signo `+` de un día para seleccionar plato y refresco o marcar **No hay clases**. Una caja configurada puede abrirse nuevamente con clic, toque, Enter o la barra espaciadora; **Vaciar día** recupera su estado inicial.
+
+Los días se guardan bajo `menu-margarita-semana-v1` y se descartan automáticamente cuando cambia la semana objetivo. Las opciones locales usan `menu-margarita-catalogos-v1`. Los precios y el teléfono continúan bajo `menu-margarita-edicion-v1`.
+
+En móvil, toca un precio o teléfono y después el lápiz para editarlos. En computadora, haz clic en el dato o utiliza Enter o la barra espaciadora.
+
+El celular debe contener nueve dígitos, comenzar con `9` y se guarda con el formato `XXX XXX XXX`. **Compartir** se habilita cuando los cinco días están resueltos —con menú o como **No hay clases**—, ambos precios son positivos y el celular es válido.
 
 El botón **Restablecer** recupera los valores generados originalmente. El botón **Compartir** permite:
 
 - descargar una imagen PNG;
 - descargar un PDF;
-- compartir el PDF mediante el menú nativo del dispositivo o descargarlo para adjuntarlo en WhatsApp.
+- compartir una imagen PNG mediante el menú nativo del dispositivo o descargarla para adjuntarla en WhatsApp.
 
-La exportación incorpora las imágenes y fuentes en una copia del SVG, por lo que los archivos descargados no dependen del servidor. Los controles de edición tampoco aparecen en la imagen, el PDF ni la impresión.
+La exportación incorpora las imágenes y fuentes en una copia del SVG, por lo que los archivos descargados no dependen del servidor. Los signos `+` y los demás controles tampoco aparecen en la imagen, el PDF ni la impresión.
+
+## Pruebas
+
+```bash
+npm run test:js
+python3 -m unittest discover -s tests -v
+```
+
+Las pruebas de JavaScript usan únicamente el ejecutor incluido en Node.js; no hay dependencias que instalar.
 
 ## Publicar en GitHub Pages
 

@@ -9,11 +9,10 @@
 <link rel="stylesheet" href="assets/css/controls.css">
 </head>
 <body>
-<!-- Sustituir las 18 variables entre llaves dobles por texto escapado como HTML.
-     Los platos admiten saltos de línea.
+<!-- Sustituir las variables entre llaves dobles por texto escapado como HTML.
      El fondo conserva las imágenes y los elementos fijos del PDF.
      Los recursos se sirven desde la carpeta assets mediante HTTP o HTTPS. -->
-<svg class="menu" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595.5 842.25" role="img" aria-labelledby="titulo descripcion">
+<svg class="menu" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595.5 842.25" role="group" aria-labelledby="titulo descripcion">
   <title id="titulo">Menú semanal de Menú Margarita</title>
   <desc id="descripcion">Menú de lunes a viernes. Contacto: {{telefono}}. Medios de pago: Yape y Plin.</desc>
   <image width="595.5" height="842.25" href="assets/images/menu-background.png" aria-hidden="true" />
@@ -25,42 +24,68 @@
     <rect x="59" y="469" width="248" height="96" rx="8" />
     <rect x="59" y="573" width="248" height="96" rx="8" />
   </g>
-    <g role="group" aria-label="Lunes">
-      <text class="fecha ajustable editable" x="183" y="188" font-size="40.8277855" data-width="230" data-field="lunes_dia" data-label="día de Lunes" data-prefix="Lunes " data-value="{{lunes_dia}}" tabindex="0" role="button">Lunes {{lunes_dia}}</text>
-      <text class="plato ajustable editable" x="183" y="214" font-size="17" data-width="200" data-lines="2" data-leading="17" data-centers="183,183" data-field="lunes_plato" data-label="plato del Lunes" data-value="{{lunes_plato}}" tabindex="0" role="button">{{lunes_plato}}</text>
-      <text class="refresco ajustable editable" x="183" y="248" font-size="17" data-width="225" data-field="lunes_refresco" data-label="refresco del Lunes" data-prefix="Refresco: " data-value="{{lunes_refresco}}" tabindex="0" role="button">Refresco: {{lunes_refresco}}</text>
+    <g class="day-card" data-day-key="lunes" role="button" tabindex="0" aria-label="Configurar Lunes">
+      <rect class="day-card-hitbox" x="59" y="157" width="248" height="96" rx="8" />
+      <text class="fecha ajustable" x="183" y="188" font-size="40.8277855" data-width="230" data-label="día de Lunes" data-prefix="Lunes " data-value="">Lunes</text>
+      <text class="plato ajustable" x="183" y="214" font-size="17" data-width="200" data-lines="2" data-leading="17" data-centers="183,183" data-label="plato del Lunes" data-value=""></text>
+      <text class="refresco ajustable" x="183" y="248" font-size="17" data-width="225" data-label="refresco del Lunes" data-prefix="Refresco: " data-value=""></text>
+      <g class="day-add-control non-exportable" aria-hidden="true">
+        <circle cx="183" cy="226" r="14" />
+        <path d="M177 226h12M183 220v12" />
+      </g>
     </g>
-    <g role="group" aria-label="Martes">
-      <text class="fecha ajustable editable" x="183" y="292" font-size="40.8277855" data-width="230" data-field="martes_dia" data-label="día de Martes" data-prefix="Martes " data-value="{{martes_dia}}" tabindex="0" role="button">Martes {{martes_dia}}</text>
-      <text class="plato ajustable editable" x="183" y="318" font-size="17" data-width="170" data-lines="2" data-leading="17" data-centers="183,183" data-field="martes_plato" data-label="plato del Martes" data-value="{{martes_plato}}" tabindex="0" role="button">{{martes_plato}}</text>
-      <text class="refresco ajustable editable" x="183" y="352" font-size="17" data-width="225" data-field="martes_refresco" data-label="refresco del Martes" data-prefix="Refresco: " data-value="{{martes_refresco}}" tabindex="0" role="button">Refresco: {{martes_refresco}}</text>
+    <g class="day-card" data-day-key="martes" role="button" tabindex="0" aria-label="Configurar Martes">
+      <rect class="day-card-hitbox" x="59" y="261" width="248" height="96" rx="8" />
+      <text class="fecha ajustable" x="183" y="292" font-size="40.8277855" data-width="230" data-label="día de Martes" data-prefix="Martes " data-value="">Martes</text>
+      <text class="plato ajustable" x="183" y="318" font-size="17" data-width="170" data-lines="2" data-leading="17" data-centers="183,183" data-label="plato del Martes" data-value=""></text>
+      <text class="refresco ajustable" x="183" y="352" font-size="17" data-width="225" data-label="refresco del Martes" data-prefix="Refresco: " data-value=""></text>
+      <g class="day-add-control non-exportable" aria-hidden="true">
+        <circle cx="183" cy="330" r="14" />
+        <path d="M177 330h12M183 324v12" />
+      </g>
     </g>
-    <g role="group" aria-label="Miércoles">
-      <text class="fecha ajustable editable" x="183" y="396" font-size="40.8277855" data-width="230" data-field="miercoles_dia" data-label="día de Miércoles" data-prefix="Miércoles " data-value="{{miercoles_dia}}" tabindex="0" role="button">Miércoles {{miercoles_dia}}</text>
-      <text class="plato ajustable editable" x="183" y="422" font-size="17" data-width="180" data-lines="2" data-leading="17" data-centers="183,183" data-field="miercoles_plato" data-label="plato del Miércoles" data-value="{{miercoles_plato}}" tabindex="0" role="button">{{miercoles_plato}}</text>
-      <text class="refresco ajustable editable" x="183" y="456" font-size="17" data-width="225" data-field="miercoles_refresco" data-label="refresco del Miércoles" data-prefix="Refresco: " data-value="{{miercoles_refresco}}" tabindex="0" role="button">Refresco: {{miercoles_refresco}}</text>
+    <g class="day-card" data-day-key="miercoles" role="button" tabindex="0" aria-label="Configurar Miércoles">
+      <rect class="day-card-hitbox" x="59" y="365" width="248" height="96" rx="8" />
+      <text class="fecha ajustable" x="183" y="396" font-size="40.8277855" data-width="230" data-label="día de Miércoles" data-prefix="Miércoles " data-value="">Miércoles</text>
+      <text class="plato ajustable" x="183" y="422" font-size="17" data-width="180" data-lines="2" data-leading="17" data-centers="183,183" data-label="plato del Miércoles" data-value=""></text>
+      <text class="refresco ajustable" x="183" y="456" font-size="17" data-width="225" data-label="refresco del Miércoles" data-prefix="Refresco: " data-value=""></text>
+      <g class="day-add-control non-exportable" aria-hidden="true">
+        <circle cx="183" cy="434" r="14" />
+        <path d="M177 434h12M183 428v12" />
+      </g>
     </g>
-    <g role="group" aria-label="Jueves">
-      <text class="fecha ajustable editable" x="183" y="500" font-size="40.8277855" data-width="230" data-field="jueves_dia" data-label="día de Jueves" data-prefix="Jueves " data-value="{{jueves_dia}}" tabindex="0" role="button">Jueves {{jueves_dia}}</text>
-      <text class="plato ajustable editable" x="183" y="526" font-size="17" data-width="170" data-lines="2" data-leading="17" data-centers="183,183" data-field="jueves_plato" data-label="plato del Jueves" data-value="{{jueves_plato}}" tabindex="0" role="button">{{jueves_plato}}</text>
-      <text class="refresco ajustable editable" x="183" y="560" font-size="17" data-width="225" data-field="jueves_refresco" data-label="refresco del Jueves" data-prefix="Refresco: " data-value="{{jueves_refresco}}" tabindex="0" role="button">Refresco: {{jueves_refresco}}</text>
+    <g class="day-card" data-day-key="jueves" role="button" tabindex="0" aria-label="Configurar Jueves">
+      <rect class="day-card-hitbox" x="59" y="469" width="248" height="96" rx="8" />
+      <text class="fecha ajustable" x="183" y="500" font-size="40.8277855" data-width="230" data-label="día de Jueves" data-prefix="Jueves " data-value="">Jueves</text>
+      <text class="plato ajustable" x="183" y="526" font-size="17" data-width="170" data-lines="2" data-leading="17" data-centers="183,183" data-label="plato del Jueves" data-value=""></text>
+      <text class="refresco ajustable" x="183" y="560" font-size="17" data-width="225" data-label="refresco del Jueves" data-prefix="Refresco: " data-value=""></text>
+      <g class="day-add-control non-exportable" aria-hidden="true">
+        <circle cx="183" cy="538" r="14" />
+        <path d="M177 538h12M183 532v12" />
+      </g>
     </g>
-    <g role="group" aria-label="Viernes">
-      <text class="fecha ajustable editable" x="183" y="604" font-size="40.8277855" data-width="230" data-field="viernes_dia" data-label="día de Viernes" data-prefix="Viernes " data-value="{{viernes_dia}}" tabindex="0" role="button">Viernes {{viernes_dia}}</text>
-      <text class="plato ajustable editable" x="183" y="630" font-size="17" data-width="180" data-lines="2" data-leading="17" data-centers="183,183" data-field="viernes_plato" data-label="plato del Viernes" data-value="{{viernes_plato}}" tabindex="0" role="button">{{viernes_plato}}</text>
-      <text class="refresco ajustable editable" x="183" y="664" font-size="17" data-width="225" data-field="viernes_refresco" data-label="refresco del Viernes" data-prefix="Refresco: " data-value="{{viernes_refresco}}" tabindex="0" role="button">Refresco: {{viernes_refresco}}</text>
+    <g class="day-card" data-day-key="viernes" role="button" tabindex="0" aria-label="Configurar Viernes">
+      <rect class="day-card-hitbox" x="59" y="573" width="248" height="96" rx="8" />
+      <text class="fecha ajustable" x="183" y="604" font-size="40.8277855" data-width="230" data-label="día de Viernes" data-prefix="Viernes " data-value="">Viernes</text>
+      <text class="plato ajustable" x="183" y="630" font-size="17" data-width="180" data-lines="2" data-leading="17" data-centers="183,183" data-label="plato del Viernes" data-value=""></text>
+      <text class="refresco ajustable" x="183" y="664" font-size="17" data-width="225" data-label="refresco del Viernes" data-prefix="Refresco: " data-value=""></text>
+      <g class="day-add-control non-exportable" aria-hidden="true">
+        <circle cx="183" cy="642" r="14" />
+        <path d="M177 642h12M183 636v12" />
+      </g>
     </g>
-    <text class="precio ajustable editable" x="173.04309" y="742.541077" font-size="21.6531601" data-width="250" data-field="precio_menu" data-label="precio del menú" data-prefix="Menú : S/ " data-value="{{precio_menu}}" tabindex="0" role="button">Menú : S/ {{precio_menu}}</text>
-    <text class="precio ajustable editable" x="173.05036" y="763.548950" font-size="21.6531601" data-width="250" data-field="precio_carta" data-label="precio del plato a la carta" data-prefix="Plato a la carta: S/ " data-value="{{precio_carta}}" tabindex="0" role="button">Plato a la carta: S/ {{precio_carta}}</text>
+    <text class="precio ajustable editable global-editable" x="173.04309" y="742.541077" font-size="21.6531601" data-width="250" data-field="precio_menu" data-label="precio del menú" data-prefix="Menú : S/ " data-value="{{precio_menu}}" tabindex="0" role="button">Menú : S/ {{precio_menu}}</text>
+    <text class="precio ajustable editable global-editable" x="173.05036" y="763.548950" font-size="21.6531601" data-width="250" data-field="precio_carta" data-label="precio del plato a la carta" data-prefix="Plato a la carta: S/ " data-value="{{precio_carta}}" tabindex="0" role="button">Plato a la carta: S/ {{precio_carta}}</text>
     <rect x="335" y="681" width="190" height="96" fill="#894b32" aria-hidden="true" />
     <image x="321" y="734" width="44" height="44" href="assets/images/whatsapp.png" aria-hidden="true" />
     <text class="contacto" x="427" y="710.52899" font-size="26.6500416">Más información:</text>
     <text class="contacto" x="427" y="736.78888" font-size="26.6500416">Sra Margarita</text>
-    <text class="telefono ajustable editable" x="445" y="763.048768" font-size="26.6500416" data-width="142" data-field="telefono" data-label="número celular" data-value="{{telefono}}" tabindex="0" role="button">{{telefono}}</text>
+    <text class="telefono ajustable editable global-editable" x="445" y="763.048768" font-size="26.6500416" data-width="142" data-field="telefono" data-label="número celular" data-value="{{telefono}}" tabindex="0" role="button">{{telefono}}</text>
 </svg>
 <div class="edit-toolbar" aria-live="polite">
   <span id="editStatus">✎ Toca o haz clic en un dato para editar</span>
-  <button id="openShare" type="button">Compartir</button>
+  <button id="openShare" type="button" aria-describedby="shareRequirements" disabled>Compartir</button>
+  <span id="shareRequirements" class="visually-hidden" role="status">Completa el menú para compartirlo.</span>
   <button id="resetAll" type="button">Restablecer</button>
 </div>
 <button id="editHint" class="edit-hint" type="button" hidden aria-label="Editar dato">
@@ -80,15 +105,54 @@
     </div>
   </form>
 </dialog>
+<dialog id="dayDialog">
+  <form id="dayForm" novalidate>
+    <h2>Configurar <span id="dayDialogLabel"></span></h2>
+    <label class="checkbox-field" for="noClasses">
+      <input id="noClasses" type="checkbox">
+      <span>No hay clases</span>
+    </label>
+    <fieldset id="dayMenuFields">
+      <label for="plateSelect">Plato</label>
+      <select id="plateSelect" required></select>
+      <div id="customPlateField" class="custom-option" hidden>
+        <label for="customPlate">Nuevo plato</label>
+        <input id="customPlate" type="text" maxlength="120" autocomplete="off">
+      </div>
+      <label for="drinkSelect">Refresco</label>
+      <select id="drinkSelect" required></select>
+      <div id="customDrinkField" class="custom-option" hidden>
+        <label for="customDrink">Nuevo refresco</label>
+        <input id="customDrink" type="text" maxlength="50" autocomplete="off">
+      </div>
+    </fieldset>
+    <p id="dayValidation" class="validation-message" role="alert" hidden></p>
+    <button id="toggleCatalogManager" class="text-button" type="button">Gestionar opciones personalizadas</button>
+    <section id="catalogManager" class="catalog-manager" hidden>
+      <h3>Platos personalizados</h3>
+      <p id="noLocalPlates">No hay platos personalizados.</p>
+      <ul id="localPlateList"></ul>
+      <h3>Refrescos personalizados</h3>
+      <p id="noLocalDrinks">No hay refrescos personalizados.</p>
+      <ul id="localDrinkList"></ul>
+    </section>
+    <div class="dialog-actions dialog-actions--split">
+      <button class="danger" id="clearDay" type="button">Vaciar día</button>
+      <span class="dialog-actions__spacer"></span>
+      <button class="secondary" id="cancelDayEdit" type="button">Cancelar</button>
+      <button class="primary" type="submit">Guardar</button>
+    </div>
+  </form>
+</dialog>
 <dialog id="shareDialog">
   <h2>Compartir Menú Margarita</h2>
   <p>Exporta el menú con los datos que aparecen actualmente en pantalla.</p>
   <div class="export-actions">
-    <button class="whatsapp" id="shareWhatsapp" type="button">WhatsApp PDF</button>
+    <button class="whatsapp" id="shareWhatsapp" type="button">WhatsApp con imagen</button>
     <button class="pdf" id="exportPdf" type="button">Descargar PDF</button>
     <button id="exportImage" type="button">Imagen PNG</button>
   </div>
-  <p class="export-note">En celulares compatibles se abrirá el menú del sistema: elige WhatsApp y selecciona el contacto. Si el navegador no permite compartir archivos, se descargará el PDF para que puedas adjuntarlo manualmente.</p>
+  <p class="export-note">En celulares compatibles se abrirá el menú del sistema: elige WhatsApp y selecciona el contacto. Si el navegador no permite compartir archivos, se descargará la imagen PNG para que puedas adjuntarla manualmente.</p>
   <div class="dialog-actions">
     <button class="secondary" id="closeShare" type="button">Cerrar</button>
   </div>

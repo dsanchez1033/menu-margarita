@@ -65,6 +65,23 @@ dialog button {
   background: var(--color-gold);
 }
 
+.edit-toolbar button:disabled,
+dialog button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
 dialog {
   width: min(420px, calc(100% - 28px));
   padding: 22px;
@@ -97,21 +114,138 @@ dialog label {
   font-weight: 700;
 }
 
+dialog fieldset {
+  min-width: 0;
+  margin: 16px 0 0;
+  padding: 0;
+  border: 0;
+}
+
+dialog select,
+dialog input[type="text"],
 dialog textarea {
   width: 100%;
-  min-height: 82px;
   padding: 11px 12px;
   color: var(--color-brown);
   background: #fff;
   border: 2px solid #bd8065;
   border-radius: 10px;
-  resize: vertical;
   font: 16px/1.35 system-ui, sans-serif;
 }
 
+dialog textarea {
+  min-height: 82px;
+  resize: vertical;
+}
+
+dialog select {
+  min-height: 48px;
+  margin-bottom: 14px;
+}
+
+dialog select.catalog-select--personalized {
+  background: #fff0c7;
+  border-color: #b96d19;
+  box-shadow: inset 5px 0 0 #b96d19;
+}
+
+dialog select:focus,
+dialog input[type="text"]:focus,
 dialog textarea:focus {
   border-color: var(--color-accent);
   outline: 3px solid rgba(201, 97, 54, 0.2);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: #f0dfcf;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.checkbox-field input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--color-accent);
+}
+
+.custom-option {
+  margin: -4px 0 14px;
+  padding: 12px;
+  background: #f3e5d8;
+  border-radius: 10px;
+}
+
+.validation-message {
+  margin: 12px 0 0 !important;
+  padding: 10px 12px;
+  color: #7a2317 !important;
+  background: #ffe0d8;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.text-button {
+  margin-top: 14px;
+  padding: 0 !important;
+  color: #70422e;
+  background: transparent;
+  text-decoration: underline;
+}
+
+.catalog-manager {
+  max-height: 230px;
+  margin-top: 12px;
+  padding: 12px;
+  overflow: auto;
+  background: #f3e5d8;
+  border-radius: 10px;
+}
+
+.catalog-manager h3 {
+  margin: 8px 0;
+  font-size: 15px;
+}
+
+.catalog-manager h3:first-child {
+  margin-top: 0;
+}
+
+.catalog-manager p {
+  margin: 4px 0 10px;
+  font-size: 13px;
+}
+
+.catalog-manager ul {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.catalog-manager li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.catalog-manager .remove-local-option {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  color: #7a2317;
+  background: #ffd9cf;
 }
 
 .dialog-actions {
@@ -129,6 +263,19 @@ dialog textarea:focus {
 .dialog-actions .primary {
   color: #fff;
   background: var(--color-accent);
+}
+
+.dialog-actions .danger {
+  color: #fff;
+  background: #9e3425;
+}
+
+.dialog-actions--split {
+  flex-wrap: wrap;
+}
+
+.dialog-actions__spacer {
+  flex: 1 1 auto;
 }
 
 .export-actions {
@@ -183,6 +330,7 @@ dialog textarea:focus {
 @media print {
   .edit-toolbar,
   .edit-hint,
+  .non-exportable,
   dialog {
     display: none !important;
   }

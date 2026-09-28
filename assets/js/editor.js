@@ -1,3 +1,5 @@
+import { formatPeruvianMobile } from './share-readiness.js';
+
 const SAVED_STATUS_DURATION = 1800;
 
 export function createEditorController({
@@ -20,9 +22,17 @@ export function createEditorController({
   let selectedField = null;
   let statusTimer = null;
 
+  function updateMenuDescription() {
+    const phone = fields.find(field => field.dataset.field === 'telefono')?.dataset.value;
+    const description = document.getElementById('descripcion');
+    if (description && phone) {
+      description.textContent = `Menú de lunes a viernes. Contacto: ${phone}. Medios de pago: Yape y Plin.`;
+    }
+  }
+
   const editInstructions = () => touchInput.matches
-    ? '✎ Toca un dato y luego el lápiz para editar'
-    : '✎ Haz clic en un dato para editar';
+    ? 'Usa + para configurar un día o toca un dato para editar'
+    : 'Usa + para configurar un día o haz clic en un dato para editar';
 
   function setStatus(message, restoreInstructions = false) {
     window.clearTimeout(statusTimer);
@@ -64,6 +74,11 @@ export function createEditorController({
     label.textContent = `Nuevo ${element.dataset.label}`;
     input.value = element.dataset.value;
     input.rows = element.classList.contains('plato') ? 3 : 1;
+    input.maxLength = element.dataset.field === 'telefono' ? 11 : 120;
+    input.inputMode = element.dataset.field === 'telefono'
+      ? 'numeric'
+      : element.classList.contains('precio') ? 'decimal' : 'text';
+    input.setCustomValidity('');
     dialog.showModal();
     input.focus();
     input.select();
@@ -73,6 +88,9 @@ export function createEditorController({
     element.dataset.default = element.dataset.value;
     if (Object.prototype.hasOwnProperty.call(savedValues, element.dataset.field)) {
       element.dataset.value = String(savedValues[element.dataset.field]);
+    }
+    if (element.dataset.field === 'telefono') {
+      element.dataset.value = formatPeruvianMobile(element.dataset.value) ?? element.dataset.value;
     }
 
     element.addEventListener('click', event => {
@@ -98,6 +116,7 @@ export function createEditorController({
 
   status.textContent = editInstructions();
   fields.forEach(initializeField);
+  updateMenuDescription();
 
   // Safari puede omitir el clic sintetizado tras un toque: abre al soltar el dedo.
   editHint.addEventListener('pointerup', event => {
@@ -118,13 +137,26 @@ export function createEditorController({
   dialog.addEventListener('close', hideEditHint);
   window.addEventListener('scroll', hideEditHint, true);
   window.addEventListener('resize', hideEditHint);
+  input.addEventListener('input', () => input.setCustomValidity(''));
 
   form.addEventListener('submit', event => {
     event.preventDefault();
-    const value = input.value.trim();
+    let value = input.value.trim();
     if (!activeField || !value) return;
 
+    if (activeField.dataset.field === 'telefono') {
+      const formattedPhone = formatPeruvianMobile(value);
+      if (!formattedPhone) {
+        input.setCustomValidity('Ingresa 9 dígitos que comiencen con 9.');
+        input.reportValidity();
+        return;
+      }
+      value = formattedPhone;
+      input.value = formattedPhone;
+    }
+
     activeField.dataset.value = value;
+    updateMenuDescription();
     layout.layoutField(activeField);
     layout.compactRows();
     onContentChange();
@@ -138,18 +170,14 @@ export function createEditorController({
   });
 
   document.getElementById('cancelEdit').addEventListener('click', () => dialog.close());
-  document.getElementById('resetAll').addEventListener('click', () => {
-    if (!window.confirm('¿Restablecer todos los datos del menú?')) return;
-
+  function resetFields() {
     const result = menuStorage.clear();
     fields.forEach(field => { field.dataset.value = field.dataset.default; });
+    updateMenuDescription();
     layout.layoutAll();
     onContentChange();
-    setStatus(
-      result.ok ? '✓ Menú restablecido' : '⚠ Menú restablecido, pero no se pudo borrar el guardado',
-      true,
-    );
-  });
+    return result;
+  }
 
-  return { hideEditHint, setStatus };
+  return { hideEditHint, resetFields, setStatus };
 }

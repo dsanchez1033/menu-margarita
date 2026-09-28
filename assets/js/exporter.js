@@ -96,13 +96,17 @@ function downloadBlob(blob, filename) {
   window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-export function createExportController({ layout, hideEditHint, setStatus }) {
+export function createExportController({ getShareReadiness, layout, hideEditHint, setStatus }) {
   const shareDialog = document.getElementById('shareDialog');
   const whatsappButton = document.getElementById('shareWhatsapp');
+  let preparedPngBlob = null;
+  let pngBuildPromise = null;
   let preparedPdfBlob = null;
   let pdfBuildPromise = null;
 
   function invalidate() {
+    preparedPngBlob = null;
+    pngBuildPromise = null;
     preparedPdfBlob = null;
     pdfBuildPromise = null;
   }
@@ -119,6 +123,7 @@ export function createExportController({ layout, hideEditHint, setStatus }) {
     clone.setAttribute('height', String(MENU_SIZE.height));
 
     inlineComputedTextStyles(original, clone);
+    clone.querySelectorAll('.non-exportable').forEach(element => element.remove());
     await Promise.all([
       embedImages(original, clone),
       createEmbeddedFontRules().then(fontRules => {
@@ -154,7 +159,7 @@ export function createExportController({ layout, hideEditHint, setStatus }) {
       throw new Error('No se pudo cargar la biblioteca para crear el PDF.');
     }
 
-    const pngBlob = await createPngBlob();
+    const pngBlob = await preparePng();
     const pdf = await window.PDFLib.PDFDocument.create();
     const image = await pdf.embedPng(await pngBlob.arrayBuffer());
     const page = pdf.addPage([MENU_SIZE.width, MENU_SIZE.height]);
@@ -165,6 +170,19 @@ export function createExportController({ layout, hideEditHint, setStatus }) {
       height: MENU_SIZE.height,
     });
     return new Blob([await pdf.save()], { type: 'application/pdf' });
+  }
+
+  function preparePng() {
+    if (preparedPngBlob) return Promise.resolve(preparedPngBlob);
+    if (!pngBuildPromise) {
+      pngBuildPromise = createPngBlob()
+        .then(blob => {
+          preparedPngBlob = blob;
+          return blob;
+        })
+        .finally(() => { pngBuildPromise = null; });
+    }
+    return pngBuildPromise;
   }
 
   function preparePdf() {
@@ -186,13 +204,19 @@ export function createExportController({ layout, hideEditHint, setStatus }) {
   }
 
   document.getElementById('openShare').addEventListener('click', () => {
+    const readiness = getShareReadiness();
+    if (!readiness.ready) {
+      setStatus(`⚠ Para compartir: ${readiness.missing.join('; ')}`, true);
+      return;
+    }
+
     hideEditHint();
     shareDialog.showModal();
     whatsappButton.disabled = true;
-    whatsappButton.textContent = 'Preparando PDF…';
+    whatsappButton.textContent = 'Preparando imagen…';
 
-    preparePdf().then(blob => {
-      const file = new File([blob], FILE_NAMES.pdf, { type: 'application/pdf' });
+    preparePng().then(blob => {
+      const file = new File([blob], FILE_NAMES.image, { type: 'image/png' });
       const canShareFile = Boolean(
         navigator.share
         && navigator.canShare
@@ -200,11 +224,11 @@ export function createExportController({ layout, hideEditHint, setStatus }) {
       );
       whatsappButton.dataset.canShare = String(canShareFile);
       whatsappButton.textContent = canShareFile
-        ? 'Compartir PDF por WhatsApp'
-        : 'Descargar PDF para WhatsApp';
+        ? 'Compartir imagen por WhatsApp'
+        : 'Descargar imagen para WhatsApp';
       whatsappButton.disabled = false;
     }).catch(error => {
-      whatsappButton.textContent = 'No se pudo preparar el PDF';
+      whatsappButton.textContent = 'No se pudo preparar la imagen';
       whatsappButton.disabled = true;
       showError(error);
     });
@@ -214,8 +238,8 @@ export function createExportController({ layout, hideEditHint, setStatus }) {
 
   whatsappButton.addEventListener('click', async () => {
     try {
-      const blob = preparedPdfBlob || await preparePdf();
-      const file = new File([blob], FILE_NAMES.pdf, { type: 'application/pdf' });
+      const blob = preparedPngBlob || await preparePng();
+      const file = new File([blob], FILE_NAMES.image, { type: 'image/png' });
       if (whatsappButton.dataset.canShare === 'true') {
         try {
           await navigator.share({
@@ -224,16 +248,16 @@ export function createExportController({ layout, hideEditHint, setStatus }) {
             files: [file],
           });
           shareDialog.close();
-          setStatus('✓ PDF compartido', true);
+          setStatus('✓ Imagen compartida', true);
         } catch (error) {
           if (error.name !== 'AbortError') throw error;
         }
         return;
       }
 
-      downloadBlob(blob, FILE_NAMES.pdf);
+      downloadBlob(blob, FILE_NAMES.image);
       shareDialog.close();
-      setStatus('✓ PDF descargado; adjúntalo en WhatsApp', true);
+      setStatus('✓ Imagen descargada; adjúntala en WhatsApp', true);
     } catch (error) {
       showError(error);
     }
@@ -244,7 +268,7 @@ export function createExportController({ layout, hideEditHint, setStatus }) {
     button.disabled = true;
     button.textContent = 'Preparando…';
     try {
-      downloadBlob(await createPngBlob(), FILE_NAMES.image);
+      downloadBlob(await preparePng(), FILE_NAMES.image);
       shareDialog.close();
       setStatus('✓ Imagen exportada', true);
     } catch (error) {

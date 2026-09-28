@@ -1,5 +1,15 @@
 export const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 export const STORAGE_KEY = 'menu-margarita-edicion-v1';
+export const WEEK_STORAGE_KEY = 'menu-margarita-semana-v1';
+export const CATALOG_STORAGE_KEY = 'menu-margarita-catalogos-v1';
+
+export const DAY_DEFINITIONS = Object.freeze([
+  { key: 'lunes', label: 'Lunes' },
+  { key: 'martes', label: 'Martes' },
+  { key: 'miercoles', label: 'Miércoles' },
+  { key: 'jueves', label: 'Jueves' },
+  { key: 'viernes', label: 'Viernes' },
+]);
 
 export const MENU_SIZE = Object.freeze({
   width: 595.5,
