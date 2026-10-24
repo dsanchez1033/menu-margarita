@@ -244,7 +244,7 @@ export function createExportController({ getShareReadiness, layout, hideEditHint
         try {
           await navigator.share({
             title: 'Menú Margarita',
-            text: 'Hola, le comparto el menú de la siguiente semana.',
+            text: 'Buenos días Miss, le comparto el menú de la siguiente semana.',
             files: [file],
           });
           shareDialog.close();
