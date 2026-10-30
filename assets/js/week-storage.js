@@ -1,6 +1,6 @@
 import { DAY_DEFINITIONS, WEEK_STORAGE_KEY } from './config.js';
 
-const VALID_STATUSES = new Set(['empty', 'menu', 'no_classes']);
+const VALID_STATUSES = new Set(['empty', 'menu', 'no_classes', 'early_departure']);
 
 function emptyDay() {
   return { status: 'empty', plato: '', refresco: '' };
@@ -22,8 +22,8 @@ function normalizeDay(value) {
     const refresco = typeof value.refresco === 'string' ? value.refresco.trim() : '';
     return plato && refresco ? { status: 'menu', plato, refresco } : emptyDay();
   }
-  if (value.status === 'no_classes') {
-    return { status: 'no_classes', plato: '', refresco: '' };
+  if (value.status === 'no_classes' || value.status === 'early_departure') {
+    return { status: value.status, plato: '', refresco: '' };
   }
   return emptyDay();
 }

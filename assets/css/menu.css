@@ -88,7 +88,7 @@ body {
   stroke-width: 1.5px;
 }
 
-.day-card--no-classes .plato {
+.day-card--no-lunch .plato {
   fill: var(--color-brown);
   font-weight: 600;
 }

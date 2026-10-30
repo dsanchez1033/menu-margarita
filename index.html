@@ -108,10 +108,18 @@
 <dialog id="dayDialog">
   <form id="dayForm" novalidate>
     <h2>Configurar <span id="dayDialogLabel"></span></h2>
-    <label class="checkbox-field" for="noClasses">
-      <input id="noClasses" type="checkbox">
-      <span>No hay clases</span>
+    <label class="checkbox-field" for="noLunch">
+      <input id="noLunch" type="checkbox">
+      <span>No hay almuerzo</span>
     </label>
+    <div id="noLunchReasonField" hidden>
+      <label for="noLunchReason">Motivo</label>
+      <select id="noLunchReason" disabled>
+        <option value="">Selecciona un motivo</option>
+        <option value="no_classes">No hay clases</option>
+        <option value="early_departure">Salida temprano</option>
+      </select>
+    </div>
     <fieldset id="dayMenuFields">
       <label for="plateSelect">Plato</label>
       <select id="plateSelect" required></select>

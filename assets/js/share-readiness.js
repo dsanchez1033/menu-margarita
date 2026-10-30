@@ -20,7 +20,7 @@ export function isPositivePrice(value) {
 }
 
 function isResolvedDay(day) {
-  if (day?.status === 'no_classes') return true;
+  if (day?.status === 'no_classes' || day?.status === 'early_departure') return true;
   return day?.status === 'menu' && Boolean(day.plato?.trim()) && Boolean(day.refresco?.trim());
 }
 

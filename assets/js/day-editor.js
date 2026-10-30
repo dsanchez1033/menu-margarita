@@ -1,7 +1,10 @@
 import { CATALOG_TYPES, normalizeCatalogValue } from './catalogs.js';
 
 const CUSTOM_VALUE = '__custom__';
-const NO_CLASSES_TEXT = 'No hay clases';
+const NO_LUNCH_REASONS = {
+  no_classes: 'No hay clases',
+  early_departure: 'Salida temprano',
+};
 
 function setHidden(element, hidden) {
   element.toggleAttribute('hidden', hidden);
@@ -21,7 +24,9 @@ export function createDayEditorController({
   const dialog = document.getElementById('dayDialog');
   const form = document.getElementById('dayForm');
   const dayLabel = document.getElementById('dayDialogLabel');
-  const noClasses = document.getElementById('noClasses');
+  const noLunch = document.getElementById('noLunch');
+  const reasonField = document.getElementById('noLunchReasonField');
+  const reasonSelect = document.getElementById('noLunchReason');
   const menuFields = document.getElementById('dayMenuFields');
   const plateSelect = document.getElementById('plateSelect');
   const drinkSelect = document.getElementById('drinkSelect');
@@ -83,18 +88,21 @@ export function createDayEditorController({
   }
 
   function updateCustomField(select, field, input) {
-    const visible = !noClasses.checked && select.value === CUSTOM_VALUE;
+    const visible = !noLunch.checked && select.value === CUSTOM_VALUE;
     field.hidden = !visible;
     input.disabled = !visible;
     input.required = visible;
   }
 
   function updateFormMode() {
-    menuFields.hidden = noClasses.checked;
-    plateSelect.disabled = noClasses.checked;
-    drinkSelect.disabled = noClasses.checked;
-    plateSelect.required = !noClasses.checked;
-    drinkSelect.required = !noClasses.checked;
+    reasonField.hidden = !noLunch.checked;
+    reasonSelect.disabled = !noLunch.checked;
+    reasonSelect.required = noLunch.checked;
+    menuFields.hidden = noLunch.checked;
+    plateSelect.disabled = noLunch.checked;
+    drinkSelect.disabled = noLunch.checked;
+    plateSelect.required = !noLunch.checked;
+    drinkSelect.required = !noLunch.checked;
     updateCustomField(plateSelect, customPlateField, customPlate);
     updateCustomField(drinkSelect, customDrinkField, customDrink);
     showValidation();
@@ -111,19 +119,19 @@ export function createDayEditorController({
     plateField.setAttribute('aria-hidden', 'true');
     drinkField.setAttribute('aria-hidden', 'true');
     dateField.dataset.value = String(day.date.getDate());
-    plateField.dataset.value = dayState.status === 'no_classes'
-      ? NO_CLASSES_TEXT
+    plateField.dataset.value = NO_LUNCH_REASONS[dayState.status]
+      ? NO_LUNCH_REASONS[dayState.status]
       : dayState.plato;
     drinkField.dataset.value = dayState.status === 'menu' ? dayState.refresco : '';
     setHidden(addControl, configured);
     card.classList.toggle('day-card--configured', configured);
-    card.classList.toggle('day-card--no-classes', dayState.status === 'no_classes');
+    card.classList.toggle('day-card--no-lunch', Boolean(NO_LUNCH_REASONS[dayState.status]));
     card.dataset.state = dayState.status;
 
     const action = configured ? 'Editar' : 'Configurar';
     const summary = dayState.status === 'menu'
       ? `${dayState.plato}; refresco ${dayState.refresco}`
-      : dayState.status === 'no_classes' ? NO_CLASSES_TEXT : 'sin menú';
+      : NO_LUNCH_REASONS[dayState.status] || 'sin menú';
     card.setAttribute(
       'aria-label',
       `${action} ${day.label} ${day.date.getDate()}: ${summary}`,
@@ -157,7 +165,8 @@ export function createDayEditorController({
     activeDayKey = dayKey;
     hideGlobalEditHint();
     dayLabel.textContent = `${day.label} ${day.date.getDate()}`;
-    noClasses.checked = dayState.status === 'no_classes';
+    noLunch.checked = Boolean(NO_LUNCH_REASONS[dayState.status]);
+    reasonSelect.value = noLunch.checked ? dayState.status : '';
     populateSelect(plateSelect, CATALOG_TYPES.platos, dayState.plato, customPlate);
     populateSelect(drinkSelect, CATALOG_TYPES.refrescos, dayState.refresco, customDrink);
     clearDayButton.hidden = dayState.status === 'empty';
@@ -214,7 +223,8 @@ export function createDayEditorController({
     });
   });
 
-  noClasses.addEventListener('change', updateFormMode);
+  noLunch.addEventListener('change', updateFormMode);
+  reasonSelect.addEventListener('change', () => showValidation());
   plateSelect.addEventListener('change', () => {
     updatePersonalizedIndicator(plateSelect, CATALOG_TYPES.platos);
     updateCustomField(plateSelect, customPlateField, customPlate);
@@ -232,10 +242,15 @@ export function createDayEditorController({
     event.preventDefault();
     if (!activeDayKey) return;
 
-    if (noClasses.checked) {
-      weekState.days[activeDayKey] = { status: 'no_classes', plato: '', refresco: '' };
+    if (noLunch.checked) {
+      if (!Object.hasOwn(NO_LUNCH_REASONS, reasonSelect.value)) {
+        showValidation('Selecciona un motivo.');
+        reasonSelect.focus();
+        return;
+      }
+      weekState.days[activeDayKey] = { status: reasonSelect.value, plato: '', refresco: '' };
       renderAllDays();
-      saveWeek('✓ Día marcado sin clases');
+      saveWeek('✓ Día marcado sin almuerzo');
       dialog.close();
       return;
     }

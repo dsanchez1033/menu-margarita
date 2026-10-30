@@ -10,7 +10,7 @@ import {
 const completeDays = {
   lunes: { status: 'menu', plato: 'Ají de gallina', refresco: 'Piña' },
   martes: { status: 'no_classes', plato: '', refresco: '' },
-  miercoles: { status: 'menu', plato: 'Cau cau', refresco: 'Cebada' },
+  miercoles: { status: 'early_departure', plato: '', refresco: '' },
   jueves: { status: 'menu', plato: 'Lomo saltado', refresco: 'Jamaica' },
   viernes: { status: 'menu', plato: 'Pollo a la olla', refresco: 'Limonada' },
 };
